@@ -16,6 +16,8 @@ config :habanero, HabaneroWeb.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
+config :habanero, Habanero,
+  plugins_path: "examples/plugins/"
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key
