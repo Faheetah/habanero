@@ -17,6 +17,8 @@ defmodule Habanero.Application do
       # {Habanero.Worker, arg}
     ]
 
+    Habanero.Loader.start_modules()
+
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Habanero.Supervisor]

@@ -28,3 +28,4 @@ habanero-*.tar
 /priv/static/
 
 /.vscode/
+*.beam

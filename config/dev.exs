@@ -13,6 +13,9 @@ config :habanero, HabaneroWeb.Endpoint,
   check_origin: false,
   watchers: []
 
+config :habanero, Habanero,
+  plugins_path: "examples/plugins/"
+
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed
