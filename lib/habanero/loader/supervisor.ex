@@ -8,22 +8,24 @@ defmodule Habanero.Loader.Supervisor do
 
   @plugin_path Application.get_env(:habanero, Habanero)[:plugin_path]
 
+  @doc false
   def start_link(_args) do
     DynamicSupervisor.start_link(__MODULE__, :ok, name: __MODULE__)
   end
 
+  @doc false
   def init(:ok) do
     Habanero.Loader.append_module_path(@plugin_path)
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 
-  @doc "Starts the supervisor tree for all modules"
+  @doc "Starts all internal and external modules as an initialization task"
   def start_children() do
-    internal_modules = Habanero.Modules.get_modules()
-    external_modules = Habanero.Loader.get_modules_by_path(@plugin_path)
-    start_modules(internal_modules ++ external_modules)
+    Habanero.Modules.get_modules() ++ Habanero.Loader.get_modules_by_path(@plugin_path)
+    |> start_modules()
   end
 
+  @doc "Starts modules given a list of modules"
   def start_modules(modules) do
     Enum.each(modules, fn module ->
       Habanero.Loader.load_module(module)
@@ -36,6 +38,7 @@ defmodule Habanero.Loader.Supervisor do
     end)
   end
 
+  @doc "Unloads all external modules and starts any found modules, terminating any removed modules"
   def reload_modules() do
     DynamicSupervisor.which_children(__MODULE__)
     |> Enum.filter(fn {_, _, _, [module]} ->
@@ -55,12 +58,12 @@ defmodule Habanero.Loader.Supervisor do
     System.cmd("elixirc", ["."], cd: @plugin_path)
   end
 
+  @doc "validate that the module can spawn a genserver and respond as expected"
   def validate_plugin() do
-    # validate that the module can spawn a genserver and respond as expected
   end
 
+  @doc "get the config for initializing plugins from the application"
   def get_plugin_config() do
-    # get the config for initializing plugins from the application
     # not sure yet what the configuration would look like, yaml?
     # for now probably just assume it's plain yaml files that are sitting in config/ or something
   end

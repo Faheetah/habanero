@@ -1,10 +1,14 @@
 defmodule Habanero.Loader do
+  @moduledoc "Handles loading and unloading of external modules"
+
   require Logger
 
+  @doc "Add the given path to the Elixir library search path"
   def append_module_path(path) do
     true = Code.append_path(path)
   end
 
+  @doc "Get a list of modules for a given path with the .beam extension, converting to module names"
   def get_modules_by_path(path) do
     path
     |> Path.join("*.beam")
@@ -17,11 +21,13 @@ defmodule Habanero.Loader do
     |> Enum.filter(&validate_module/1)
   end
 
+  @doc "Unloads a module and purges it from BEAM"
   def unload_module(module) do
     :code.purge(module)
     :code.delete(module)
   end
 
+  @doc "Loads a module into BEAM"
   def load_module(module) do
     :code.load_file(module)
     |> case do
