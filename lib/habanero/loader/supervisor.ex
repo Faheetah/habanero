@@ -21,7 +21,7 @@ defmodule Habanero.Loader.Supervisor do
 
   @doc "Starts all internal and external modules as an initialization task"
   def start_children() do
-    Habanero.Modules.get_modules() ++ Habanero.Loader.get_modules_by_path(@plugin_path)
+    (Habanero.Modules.get_modules() ++ Habanero.Loader.get_modules_by_path(@plugin_path))
     |> start_modules()
   end
 
@@ -29,11 +29,19 @@ defmodule Habanero.Loader.Supervisor do
   def start_modules(modules) do
     Enum.each(modules, fn module ->
       Habanero.Loader.load_module(module)
+
       DynamicSupervisor.start_child(__MODULE__, module)
       |> case do
-        {:ok, pid} -> Logger.info("Started #{module} on pid #{inspect pid}")
-        {:error, {:already_started, pid}} -> Logger.warning("Module conflict: #{module} already started and running on pid #{inspect pid}")
-        msg -> Logger.error("An unexpected error occurred: #{inspect msg}")
+        {:ok, pid} ->
+          Logger.info("Started #{module} on pid #{inspect(pid)}")
+
+        {:error, {:already_started, pid}} ->
+          Logger.warning(
+            "Module conflict: #{module} already started and running on pid #{inspect(pid)}"
+          )
+
+        msg ->
+          Logger.error("An unexpected error occurred: #{inspect(msg)}")
       end
     end)
   end

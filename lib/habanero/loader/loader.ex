@@ -33,7 +33,7 @@ defmodule Habanero.Loader do
     |> case do
       {:module, _} -> Logger.info("Successfully loaded #{module}")
       {:error, :badfile} -> Logger.warning("Module could not be loaded: #{module}")
-      msg -> Logger.error("An unknown error happened while loading #{module}: #{inspect msg}")
+      msg -> Logger.error("An unknown error happened while loading #{module}: #{inspect(msg)}")
     end
 
     module
@@ -45,7 +45,9 @@ defmodule Habanero.Loader do
       false ->
         Logger.warning("Attempted to load a duplicated module: #{module}")
         false
-      true -> true
+
+      true ->
+        true
     end
   end
 end

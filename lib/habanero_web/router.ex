@@ -1,4 +1,6 @@
 defmodule HabaneroWeb.Router do
+  @moduledoc false
+
   use HabaneroWeb, :router
 
   pipeline :api do
@@ -7,9 +9,9 @@ defmodule HabaneroWeb.Router do
 
   scope "/api", HabaneroWeb do
     pipe_through :api
-    get "/run/:module", TaskController, :run
-    get "/reload", TaskController, :reload
-    get "/recompile", TaskController, :recompile
+    get "/task/:module/run", TaskController, :run
+    get "/plugins/reload", PluginController, :reload
+    get "/plugins/recompile", PluginController, :recompile
   end
 
   # Enables LiveDashboard only for development
