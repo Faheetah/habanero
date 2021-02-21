@@ -5,11 +5,6 @@ defmodule Habanero.Loader do
     true = Code.append_path(path)
   end
 
-  def load_modules_by_path(path) do
-    Habanero.Loader.get_modules_by_path(path)
-    |> Enum.each(&Habanero.Loader.load_module/1)
-  end
-
   def get_modules_by_path(path) do
     path
     |> Path.join("*.beam")
@@ -19,10 +14,10 @@ defmodule Habanero.Loader do
       |> Path.basename(".beam")
       |> String.to_atom()
     end)
+    |> Enum.filter(&validate_module/1)
   end
 
   def load_module(module) do
-    Logger.info("Loading module #{module}")
     :code.purge(module)
     :code.delete(module)
 
@@ -38,9 +33,11 @@ defmodule Habanero.Loader do
 
   @doc "Ensure module does not collide with the Habanero namespace"
   def validate_module(module) do
-    module
-    # if module name starts with Habanero, throw error
-    # {:ok, module}
-    # {:error, "Module name must not collide with any currently imported modules"}
+    case !:erlang.function_exported(module, :module_info, 0) do
+      false ->
+        Logger.warning("Attempted to load a duplicated module: #{module}")
+        false
+      true -> true
+    end
   end
 end
