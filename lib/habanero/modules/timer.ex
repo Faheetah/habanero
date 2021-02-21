@@ -8,7 +8,7 @@ defmodule Habanero.Modules.Timer do
       [
         {:log_limit, 1_000_000}
       ],
-      name: __MODULE__
+      name: Timer
     )
   end
 

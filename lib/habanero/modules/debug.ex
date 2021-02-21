@@ -8,7 +8,7 @@ defmodule Habanero.Modules.Debug do
       [
         {:log_limit, 1_000_000}
       ],
-      name: __MODULE__
+      name: Debug
     )
   end
 
