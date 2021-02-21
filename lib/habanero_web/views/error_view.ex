@@ -1,4 +1,6 @@
 defmodule HabaneroWeb.ErrorView do
+  @moduledoc false
+
   use HabaneroWeb, :view
 
   # If you want to customize a particular status code
