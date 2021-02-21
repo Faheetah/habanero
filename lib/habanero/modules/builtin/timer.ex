@@ -1,4 +1,4 @@
-defmodule Habanero.Modules.Timer do
+defmodule Habanero.Modules.Builtin.Timer do
   use GenServer
   require Logger
 

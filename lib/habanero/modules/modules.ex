@@ -3,31 +3,21 @@ defmodule Habanero.Modules do
   Built in modules registry
   """
 
-  alias Habanero.Modules
-
-  @enforce_keys [
-    :method,
-    :module,
-    :status
-  ]
-
-  @derive Jason.Encoder
-  defstruct [
-    :method,
-    :message,
-    :module,
-    :status
-  ]
+  alias Habanero.Modules.Builtin
 
   def error(module, method, message) do
-    %__MODULE__{module: module, method: method, message: message, status: :error}
+    %Habanero.Modules.Module{module: module, method: method, message: message, status: :error}
+  end
+
+  def result(result) do
+    struct!(Habanero.Modules.Module, result)
   end
 
   @doc "Get the list of internal modules"
   def get_modules() do
     [
-      Modules.Debug,
-      Modules.Timer
+      Builtin.Debug,
+      Builtin.Timer
     ]
   end
 end

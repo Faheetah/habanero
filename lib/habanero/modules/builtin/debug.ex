@@ -1,4 +1,4 @@
-defmodule Habanero.Modules.Debug do
+defmodule Habanero.Modules.Builtin.Debug do
   use GenServer
   require Logger
 

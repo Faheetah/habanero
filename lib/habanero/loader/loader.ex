@@ -56,15 +56,14 @@ defmodule Habanero.Loader do
     case to_existing_atom(module) do
       {:ok, mod} ->
         try do
-          struct!(
-            Habanero.Modules,
+          Habanero.Modules.result(
             mod
             |> GenServer.call({String.to_existing_atom(method)})
             |> Map.put(:module, Macro.underscore(mod))
             |> Map.put(:method, method)
           )
         rescue
-          _e in [Protocol.UndefinedError, BadMapError, KeyError] ->
+          _error in [Protocol.UndefinedError, BadMapError, KeyError] ->
             Logger.error(
               "Module #{mod} does not confirm to module standards, expects a %Modules{} struct"
             )
@@ -86,10 +85,7 @@ defmodule Habanero.Loader do
         end
 
       {:error, msg} ->
-        {:error, msg}
-
-      msg ->
-        {:error, "An unknown error occurred: #{inspect(msg)}"}
+        Habanero.Modules.error(module, method, msg)
     end
   end
 
