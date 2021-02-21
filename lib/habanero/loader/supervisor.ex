@@ -3,10 +3,16 @@ defmodule Habanero.Loader.Supervisor do
   Supervisor tree for all modules, including external modules loaded from plugin path
   """
 
+  # @todo More logic should be shed out of here to Loader and Loader.Starter, make this file only concerned with supervising
+
   use DynamicSupervisor
   require Logger
 
   @plugin_path Application.get_env(:habanero, Habanero)[:plugin_path]
+
+  def get_plugin_path() do
+    @plugin_path
+  end
 
   @doc false
   def start_link(_args) do
@@ -33,11 +39,11 @@ defmodule Habanero.Loader.Supervisor do
       DynamicSupervisor.start_child(__MODULE__, module)
       |> case do
         {:ok, pid} ->
-          Logger.info("Started #{module} on pid #{inspect(pid)}")
+          Logger.info("Started #{module} on #{inspect(pid)}")
 
         {:error, {:already_started, pid}} ->
           Logger.warning(
-            "Module conflict: #{module} already started and running on pid #{inspect(pid)}"
+            "Module conflict: #{module} already started and running on #{inspect(pid)}"
           )
 
         msg ->
@@ -59,11 +65,6 @@ defmodule Habanero.Loader.Supervisor do
       module
     end)
     |> start_modules()
-  end
-
-  @doc "Compiles any source files found in the configured plugin path"
-  def compile_modules() do
-    System.cmd("elixirc", ["."], cd: @plugin_path)
   end
 
   @doc "validate that the module can spawn a genserver and respond as expected"

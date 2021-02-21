@@ -9,7 +9,7 @@ defmodule HabaneroWeb.Router do
 
   scope "/api", HabaneroWeb do
     pipe_through :api
-    get "/task/:module/run", TaskController, :run
+    get "/task/:module/:method", TaskController, :run
     get "/plugins/reload", PluginController, :reload
     get "/plugins/recompile", PluginController, :recompile
   end

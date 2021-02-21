@@ -13,7 +13,6 @@ defmodule Habanero.Modules.Debug do
   end
 
   def handle_call({:run}, _from, state) do
-    Logger.info("#{__MODULE__} called")
-    {:reply, __MODULE__, state}
+    {:reply, %{setatus: :ok, message: __MODULE__}, state}
   end
 end

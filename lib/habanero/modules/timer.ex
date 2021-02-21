@@ -19,6 +19,6 @@ defmodule Habanero.Modules.Timer do
 
   def handle_call({:run}, _from, state) do
     Logger.info("#{__MODULE__} called")
-    {:reply, __MODULE__, state}
+    {:reply, %{status: :ok, message: __MODULE__}, state}
   end
 end

@@ -16,13 +16,17 @@ defmodule Bar do
   end
 
   def init(args) do
-    Logger.info("#{__MODULE__} task started")
     {:ok, args}
   end
 
   def handle_call({:run}, _from, state) do
     count = state[:count]
     Keyword.replace(state, :count, state[:count] + 1)
-    {:reply, "#{__MODULE__}: #{count}", Keyword.replace(state, :count, count + @increment_by)}
+
+    {
+      :reply,
+      %{module: __MODULE__, status: :ok, message: count},
+      Keyword.replace(state, :count, count + @increment_by)
+    }
   end
 end
