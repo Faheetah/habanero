@@ -21,8 +21,11 @@ defmodule Habanero.Loader.Supervisor do
   def start_children() do
     internal_modules = Habanero.Modules.get_modules()
     external_modules = Habanero.Loader.get_modules_by_path(@plugin_path)
-    internal_modules ++ external_modules
-    |> Enum.each(fn module ->
+    start_modules(internal_modules ++ external_modules)
+  end
+
+  def start_modules(modules) do
+    Enum.each(modules, fn module ->
       Habanero.Loader.load_module(module)
       DynamicSupervisor.start_child(__MODULE__, module)
       |> case do
@@ -35,12 +38,16 @@ defmodule Habanero.Loader.Supervisor do
 
   def reload_modules() do
     DynamicSupervisor.which_children(__MODULE__)
-    |> IO.inspect
-    |> Enum.each(fn {:undefined, pid, _type, modules} ->
-      Logger.info("Terminating #{hd(modules)}")
-      DynamicSupervisor.terminate_child(__MODULE__, pid)
+    |> Enum.filter(fn {_, _, _, [module]} ->
+      !Enum.member?(Habanero.Modules.get_modules(), module)
     end)
-    start_children()
+    |> Enum.map(fn {:undefined, pid, _type, [module]} ->
+      Logger.info("Terminating #{module}")
+      DynamicSupervisor.terminate_child(__MODULE__, pid)
+      Habanero.Loader.unload_module(module)
+      module
+    end)
+    |> start_modules()
   end
 
   @doc "Compiles any source files found in the configured plugin path"
