@@ -21,9 +21,9 @@ defmodule Habanero.Loader.Supervisor do
   def start_children() do
     internal_modules = Habanero.Modules.get_modules()
     external_modules = Habanero.Loader.get_modules_by_path(@plugin_path)
-    Enum.each(external_modules, &Habanero.Loader.load_module/1)
     Enum.dedup(internal_modules ++ external_modules)
     |> Enum.each(fn module ->
+      Habanero.Loader.load_module(module)
       DynamicSupervisor.start_child(__MODULE__, module)
     end)
   end
@@ -35,12 +35,7 @@ defmodule Habanero.Loader.Supervisor do
       Logger.info("Terminating #{hd(modules)}")
       DynamicSupervisor.terminate_child(__MODULE__, pid)
     end)
-
-    Habanero.Loader.get_modules_by_path(@plugin_path)
-    |> Enum.each(fn module ->
-      Habanero.Loader.load_module(module)
-      DynamicSupervisor.start_child(__MODULE__, module)
-    end)
+    start_children()
   end
 
   @doc "Compiles any source files found in the configured plugin path"
