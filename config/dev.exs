@@ -14,7 +14,7 @@ config :habanero, HabaneroWeb.Endpoint,
   watchers: []
 
 config :habanero, Habanero,
-  plugins_path: "examples/plugins/"
+  plugin_path: "examples/plugins/"
 
 # ## SSL Support
 #

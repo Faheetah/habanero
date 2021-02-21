@@ -12,12 +12,12 @@ defmodule Habanero.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Habanero.PubSub},
       # Start the Endpoint (http/https)
-      HabaneroWeb.Endpoint
+      HabaneroWeb.Endpoint,
       # Start a worker by calling: Habanero.Worker.start_link(arg)
       # {Habanero.Worker, arg}
+      Habanero.Loader.Supervisor,
+      Habanero.Loader.Starter
     ]
-
-    Habanero.Loader.start_modules()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

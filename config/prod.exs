@@ -17,7 +17,7 @@ config :habanero, HabaneroWeb.Endpoint,
 config :logger, level: :info
 
 config :habanero, Habanero,
-  plugins_path: "examples/plugins/"
+  plugin_path: "examples/plugins/"
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key

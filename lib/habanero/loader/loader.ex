@@ -1,21 +1,16 @@
 defmodule Habanero.Loader do
   require Logger
 
-  @plugin_path Application.get_env(:habanero, Habanero)[:plugins_path]
-
-  def load_module(path, module) do
-    Code.append_path(path)
-    :code.load_file(module)
-  end
-
-  def load_modules_from_path() do
-    @plugin_path
-    |> load_modules_from_path
-  end
-
-  def load_modules_from_path(path) do
+  def append_module_path(path) do
     true = Code.append_path(path)
+  end
 
+  def load_modules_by_path(path) do
+    Habanero.Loader.get_modules_by_path(@plugin_path)
+    |> Enum.each(&Habanero.Loader.load_module/1)
+  end
+
+  def get_modules_by_path(path) do
     path
     |> Path.join("*.beam")
     |> Path.wildcard()
@@ -24,45 +19,28 @@ defmodule Habanero.Loader do
       |> Path.basename(".beam")
       |> String.to_atom()
     end)
-    |> Enum.map(fn module ->
-      Logger.info("Loading module #{module}")
-      :code.purge(module)
-      :code.delete(module)
-
-      :code.load_file(module)
-      |> case do
-        {:module, _} -> Logger.info("Successfully loaded #{module}")
-        {:error, :badfile} -> Logger.error("Module could not be loaded: #{module}")
-        _ -> Logger.error("An unknown error happened while loading #{module}")
-      end
-
-      module
-    end)
   end
 
-  def unload_module(module) do
+  def load_module(module) do
+    Logger.info("Loading module #{module}")
     :code.purge(module)
+    :code.delete(module)
+
+    :code.load_file(module)
+    |> case do
+      {:module, _} -> Logger.info("Successfully loaded #{module}")
+      {:error, :badfile} -> Logger.error("Module could not be loaded: #{module}")
+      _ -> Logger.error("An unknown error happened while loading #{module}")
+    end
+
+    module
   end
 
-  def call_module(module, method) do
-    apply(String.to_existing_atom(module), method, [])
-  end
-
-  def start_modules() do
-    modules = load_modules_from_path()
-    opts = [strategy: :one_for_one, name: Habanero.Loader.Supervisor]
-    Supervisor.start_link(modules, opts)
-    modules
-  end
-
-  def restart_modules() do
-    modules = load_modules_from_path()
-    Supervisor.stop(Habanero.Loader.Supervisor)
-    start_modules()
-    modules
-  end
-
-  def compile_modules() do
-    System.cmd("elixirc", ["."], cd: @plugin_path)
+  @doc "Ensure module does not collide with the Habanero namespace"
+  def validate_module(module) do
+    module
+    # if module name starts with Habanero, throw error
+    # {:ok, module}
+    {:error, "Module name must not collide with any currently imported modules"}
   end
 end
