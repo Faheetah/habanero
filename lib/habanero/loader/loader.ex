@@ -6,7 +6,7 @@ defmodule Habanero.Loader do
   end
 
   def load_modules_by_path(path) do
-    Habanero.Loader.get_modules_by_path(@plugin_path)
+    Habanero.Loader.get_modules_by_path(path)
     |> Enum.each(&Habanero.Loader.load_module/1)
   end
 
@@ -29,8 +29,8 @@ defmodule Habanero.Loader do
     :code.load_file(module)
     |> case do
       {:module, _} -> Logger.info("Successfully loaded #{module}")
-      {:error, :badfile} -> Logger.error("Module could not be loaded: #{module}")
-      _ -> Logger.error("An unknown error happened while loading #{module}")
+      {:error, :badfile} -> Logger.warning("Module could not be loaded: #{module}")
+      msg -> Logger.error("An unknown error happened while loading #{module}: #{inspect msg}")
     end
 
     module
@@ -41,6 +41,6 @@ defmodule Habanero.Loader do
     module
     # if module name starts with Habanero, throw error
     # {:ok, module}
-    {:error, "Module name must not collide with any currently imported modules"}
+    # {:error, "Module name must not collide with any currently imported modules"}
   end
 end

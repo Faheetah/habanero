@@ -21,10 +21,15 @@ defmodule Habanero.Loader.Supervisor do
   def start_children() do
     internal_modules = Habanero.Modules.get_modules()
     external_modules = Habanero.Loader.get_modules_by_path(@plugin_path)
-    Enum.dedup(internal_modules ++ external_modules)
+    internal_modules ++ external_modules
     |> Enum.each(fn module ->
       Habanero.Loader.load_module(module)
       DynamicSupervisor.start_child(__MODULE__, module)
+      |> case do
+        {:ok, pid} -> Logger.info("Started #{module} on pid #{inspect pid}")
+        {:error, {:already_started, pid}} -> Logger.warning("Module conflict: #{module} already started and running on pid #{inspect pid}")
+        msg -> Logger.error("An unexpected error occurred: #{inspect msg}")
+      end
     end)
   end
 
