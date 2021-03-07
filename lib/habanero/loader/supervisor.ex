@@ -8,10 +8,9 @@ defmodule Habanero.Loader.Supervisor do
   use DynamicSupervisor
   require Logger
 
-  @plugin_path Application.get_env(:habanero, Habanero) |> Keyword.get(:plugin_path)
-
   def get_plugin_path() do
-    @plugin_path
+    Application.get_env(:habanero, Habanero)
+    |> Keyword.get(:plugin_path)
   end
 
   @doc false
@@ -21,13 +20,13 @@ defmodule Habanero.Loader.Supervisor do
 
   @doc false
   def init(:ok) do
-    Habanero.Loader.append_module_path(@plugin_path)
+    Habanero.Loader.append_module_path(get_plugin_path())
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 
   @doc "Starts all internal and external modules as an initialization task"
   def start_children() do
-    (Habanero.Modules.get_modules() ++ Habanero.Loader.get_modules_by_path(@plugin_path))
+    (Habanero.Modules.get_modules() ++ Habanero.Loader.get_modules_by_path(get_plugin_path()))
     |> start_modules()
   end
 

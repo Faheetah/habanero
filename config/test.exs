@@ -8,3 +8,5 @@ config :habanero, HabaneroWeb.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+
+config :habanero, Habanero, []

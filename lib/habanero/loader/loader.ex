@@ -13,6 +13,8 @@ defmodule Habanero.Loader do
   end
 
   @doc "Get a list of modules for a given path with the .beam extension, converting to module names"
+  def get_modules_by_path(nil), do: []
+
   def get_modules_by_path(path) do
     path
     |> Path.join("*.beam")
