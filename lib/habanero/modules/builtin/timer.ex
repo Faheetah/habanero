@@ -13,7 +13,6 @@ defmodule Habanero.Modules.Builtin.Timer do
   end
 
   def init(args) do
-    Logger.info("#{__MODULE__} task started")
     {:ok, args}
   end
 

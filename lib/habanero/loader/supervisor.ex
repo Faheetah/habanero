@@ -8,7 +8,7 @@ defmodule Habanero.Loader.Supervisor do
   use DynamicSupervisor
   require Logger
 
-  @plugin_path Application.get_env(:habanero, Habanero)[:plugin_path]
+  @plugin_path Application.get_env(:habanero, Habanero) |> Keyword.get(:plugin_path)
 
   def get_plugin_path() do
     @plugin_path

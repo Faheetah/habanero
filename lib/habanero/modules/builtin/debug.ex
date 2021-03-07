@@ -12,6 +12,10 @@ defmodule Habanero.Modules.Builtin.Debug do
     )
   end
 
+  def init(args) do
+    {:ok, args}
+  end
+
   def handle_call({:run}, _from, state) do
     {:reply, %{setatus: :ok, message: __MODULE__}, state}
   end

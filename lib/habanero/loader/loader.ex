@@ -4,6 +4,10 @@ defmodule Habanero.Loader do
   require Logger
 
   @doc "Add the given path to the Elixir library search path"
+  def append_module_path(nil) do
+    Logger.warn("No external plugin path given, skipping")
+  end
+
   def append_module_path(path) do
     true = Code.append_path(path)
   end
@@ -87,6 +91,13 @@ defmodule Habanero.Loader do
       {:error, msg} ->
         Habanero.Modules.error(module, method, msg)
     end
+  end
+
+  @doc "Removes beam files at a given path"
+  def delete_beam_files(plugin_path) do
+    Path.join(plugin_path, "*.beam")
+    |> Path.wildcard()
+    |> Enum.each(&File.rm/1)
   end
 
   @doc "Compiles any source files found in the configured plugin path"
