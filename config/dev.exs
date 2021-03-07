@@ -11,7 +11,8 @@ config :habanero, HabaneroWeb.Endpoint,
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
-  watchers: []
+  watchers: [],
+  secret_key_base: "EtK+puF0Dzt74i3piKIhIJilF+vdj0gyMzQKiDocJ2vP17LFRB1297Mjl+iDn7g8"
 
 config :habanero, Habanero,
   plugin_path: "examples/plugins/"
